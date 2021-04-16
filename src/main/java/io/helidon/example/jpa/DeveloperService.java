@@ -1,8 +1,11 @@
 
 package io.helidon.example.jpa;
 
+import io.netty.util.internal.StringUtil;
+
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.json.Json;
@@ -24,6 +27,10 @@ public class DeveloperService {
 
     @Transactional
     public Developer createDeveloper(Developer developer) {
+        if(StringUtil.isNullOrEmpty(developer.getId()))
+        {
+            developer.setId(UUID.randomUUID().toString());
+        }
         this.entityManager.persist(developer);
         return developer;
     }

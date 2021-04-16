@@ -1,28 +1,17 @@
 
 package io.helidon.example.jpa;
 
-import java.util.Collections;
-
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.json.Json;
 import javax.json.JsonBuilderFactory;
-
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.Consumes;
+import javax.transaction.Transactional;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.Collections;
+
 import static javax.ws.rs.core.Response.ok;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
-import javax.transaction.Transactional;
-import javax.ws.rs.PathParam;
 
 
 /**
@@ -38,9 +27,7 @@ import javax.ws.rs.PathParam;
 public class DeveloperResource {
     private static final JsonBuilderFactory JSON = Json.createBuilderFactory(Collections.emptyMap());
     private final DeveloperService developerService;
-
-    @PersistenceContext 
-    private EntityManager em;
+    private final String DEVELOPERS_API_PATH = "/developers";
 
     @Inject
     public DeveloperResource(DeveloperService developerService) {
@@ -56,7 +43,8 @@ public class DeveloperResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     public Response createDeveloper(Developer developer) {
-        return ok(this.developerService.createDeveloper(developer)).build();
+        var createdDeveloper = this.developerService.createDeveloper(developer);
+        return Response.status(Response.Status.CREATED).header("Location", DEVELOPERS_API_PATH + "/" + createdDeveloper.getId()).entity(developer).build();
     }
 
     @GET

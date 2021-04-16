@@ -1,18 +1,12 @@
 package io.helidon.example.jpa;
 
 import java.io.Serializable;
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.Objects;
 
-import javax.persistence.Access;
-import javax.persistence.AccessType;
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
-// import org.eclipse.persistence.annotations.UuidGenerator;
+import javax.persistence.*;
 
 @Access(value = AccessType.FIELD) 
 @Entity(name = "Developer") 
@@ -35,10 +29,16 @@ public class Developer implements Serializable {
 
     @Basic(optional = true) 
     @Column(insertable = true, name = "CREATED_AT", nullable = false, updatable = true)
-    private ZonedDateTime createdAt;
+    private OffsetDateTime createdAt;
 
-    // @ElementCollection
-    // private ArrayList<String> skills;
+    @Basic(optional = true)
+    @Column(insertable = true, name = "UPDATED_AT", nullable = false, updatable = true)
+    private OffsetDateTime updatedAt;
+
+
+    @Convert(converter = DeveloperSkillsConverter.class)
+    @Column(insertable = true, name = "SKILLS", nullable = false, updatable = true)
+    private ArrayList<String> skils;
 
     @Deprecated
     protected Developer() { 
@@ -46,7 +46,7 @@ public class Developer implements Serializable {
     }
 
     public String getId() {
-        return this.id.toString();
+        return this.id;
     }
 
     public String getName() {
@@ -57,13 +57,13 @@ public class Developer implements Serializable {
         return this.team;
     }
 
-    public ZonedDateTime getCreatedAt() {
+    public OffsetDateTime getCreatedAt() {
         return this.createdAt;
     }
 
-    // public ArrayList<String> getSkills() {
-    //     return this.skills;
-    // }
+    public ArrayList<String> getSkils() {
+         return this.skils;
+    }
 
     public void setId(String id) {
         this.id = Objects.requireNonNull(id);
@@ -77,8 +77,13 @@ public class Developer implements Serializable {
         this.team = Objects.requireNonNull(team);
     }
 
-    public void setCreatedAt(ZonedDateTime createdAt) {
+    public void setCreatedAt(OffsetDateTime createdAt) {
         this.createdAt = Objects.requireNonNull(createdAt);
+    }
+
+    public void setSkils(ArrayList<String> skils)
+    {
+        this.skils = skils;
     }
 
     @Override
@@ -86,4 +91,22 @@ public class Developer implements Serializable {
         return this.getId() + " - " + this.getName() + " - " + this.getTeam();
     }
 
+    public OffsetDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(OffsetDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    @PrePersist
+    public void prePersist() {
+        this.createdAt = OffsetDateTime.now();
+        this.updatedAt = OffsetDateTime.now();
+    }
+
+    @PreUpdate
+    public void preUpdate() {
+        this.updatedAt = OffsetDateTime.now();
+    }
 }
