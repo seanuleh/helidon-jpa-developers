@@ -10,7 +10,7 @@ import javax.persistence.*;
 
 @Access(value = AccessType.FIELD) 
 @Entity(name = "Developer") 
-@Table(name = "DEVELOPER") 
+@Table(name = "DEVELOPER")
 public class Developer implements Serializable { 
 
     private static final long serialVersionUID = 1L;
