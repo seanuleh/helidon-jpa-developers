@@ -58,6 +58,10 @@ public class DeveloperResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getDeveloper(@PathParam("devId") String devId) {
         Developer developer = this.developerService.getDeveloper(devId);
+        if(developer==null)
+        {
+            throw new NotFoundException();
+        }
         return ok(developer).build();
     }
 

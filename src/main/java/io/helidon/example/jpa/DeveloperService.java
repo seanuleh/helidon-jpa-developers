@@ -84,6 +84,10 @@ public class DeveloperService {
                     order = cb.desc(root.get(split[0]));
                 }
             }
+            else
+            {
+                throw new ValidationException("Invalid sort parameter");
+            }
         }
         return order;
     }
