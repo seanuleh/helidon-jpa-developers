@@ -11,6 +11,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.Collections;
 
+import static javax.ws.rs.core.Response.noContent;
 import static javax.ws.rs.core.Response.ok;
 
 
@@ -36,8 +37,12 @@ public class DeveloperResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getAllDevelopers() {
-        return ok(this.developerService.getAllDevelopers()).build();
+    public Response searchDevelopers(@QueryParam("name")String name,
+                                     @QueryParam("team")String team,
+                                     @DefaultValue("1") @QueryParam("page")Integer page,
+                                     @DefaultValue("10") @QueryParam("pageSize")Integer pageSize,
+                                     @QueryParam("sort")String sort) {
+        return ok(developerService.searchDevelopers(name,team,page,pageSize,sort)).build();
     }
 
     @POST
@@ -62,7 +67,7 @@ public class DeveloperResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response deleteDeveloper(@PathParam("devId") String devId) {
         this.developerService.deleteDeveloper(devId);
-        return ok().build();
+        return noContent().build();
     }
 
 }
